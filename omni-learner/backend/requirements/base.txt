@@ -1,0 +1,27 @@
+# Django Core
+Django==5.0.1
+djangorestframework==3.14.0
+django-filter==24.1
+
+# Database
+psycopg[binary]==3.3.2
+
+# Authentication & Security
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+
+# Environment Management
+python-decouple==3.8
+
+# Celery & Redis - UPDATED VERSIONS
+celery==5.3.6
+redis==5.0.1
+django-celery-beat==2.6.0
+django-celery-results==2.5.1
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2024.1
+
+# Image Processing
+Pillow==11.0.0

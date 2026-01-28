@@ -15,3 +15,5 @@ A productivity system combining Kanban, Pomodoro, Deep Work, and Financial Punis
 ```bash
 docker-compose up --build
 ```
+
+Visit: http://localhost:8000/admin
