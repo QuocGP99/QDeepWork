@@ -16,6 +16,7 @@ export interface Board {
   description: string;
   board_type: 'personal' | 'project' | 'sprint';
   is_active: boolean;
+  is_archived: boolean;
   owner: number;
   owner_email: string;
   column_count: number;
@@ -23,6 +24,7 @@ export interface Board {
   created_at: string;
   updated_at: string;
   columns?: Column[];
+  default_columns?: string[];
 }
 
 // Column types
@@ -123,4 +125,12 @@ export interface RegisterData {
 export interface AuthTokens {
   access: string;
   refresh: string;
+}
+
+// API types
+export interface PaginatedResponse<T> {
+  results: T[];
+  count: number;
+  next: string | null;
+  previous: string | null;
 }
