@@ -32,6 +32,7 @@ class Board(TimeStampedModel):
         max_length=20, choices=BOARD_TYPES, default="personal"
     )
     is_active = models.BooleanField(default=True)
+    is_archived = models.BooleanField(default=False)
 
     # Settings
     default_columns = models.JSONField(

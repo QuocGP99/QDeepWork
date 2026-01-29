@@ -98,6 +98,28 @@ class BoardViewSet(viewsets.ModelViewSet):
 
         serializer = self.get_serializer(new_board)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=True, methods=['post'])
+    def archive(self, request, pk=None):
+        """Archive a board"""
+        board = self.get_object()
+        board.is_archived = True
+        board.is_active = False
+        board.save()
+        
+        serializer = self.get_serializer(board)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def unarchive(self, request, pk=None):
+        """Unarchive a board"""
+        board = self.get_object()
+        board.is_archived = False
+        board.is_active = True
+        board.save()
+        
+        serializer = self.get_serializer(board)
+        return Response(serializer.data)
 
     @action(detail=True, methods=["get"])
     def statistics(self, request, pk=None):

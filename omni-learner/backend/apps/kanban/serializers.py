@@ -18,6 +18,7 @@ class BoardListSerializer(serializers.ModelSerializer):
             "description",
             "board_type",
             "is_active",
+            "is_archived",
             "owner",
             "owner_email",
             "column_count",
