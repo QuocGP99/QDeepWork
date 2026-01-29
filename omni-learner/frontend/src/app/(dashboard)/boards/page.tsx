@@ -5,17 +5,22 @@ import { useBoards } from '../../../hooks/use-boards';
 import { BoardCard } from '../../../components/boards/board-card';
 import { CreateBoardModal } from '../../../components/boards/create-board-modal';
 import { Button } from '../../../components/ui/button';
-import { Plus, Loader2, Search } from 'lucide-react';
+import { Plus, Loader2, Search, Archive } from 'lucide-react';
 import { Input } from '../../../components/ui/input';
 
 export default function BoardsPage() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [showArchived, setShowArchived] = useState(false);
     const { data: boards, isLoading, error } = useBoards();
 
-    const filteredBoards = boards?.filter((board) =>
-        board.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredBoards = boards?.filter((board) => {
+        const matchesSearch = board.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
+        const matchesArchived = showArchived ? board.is_archived : !board.is_archived;
+        return matchesSearch && matchesArchived;
+    });
 
     if (isLoading) {
         return (
@@ -33,21 +38,39 @@ export default function BoardsPage() {
         );
     }
 
+
+    const archivedCount = boards?.filter((b) => b.is_archived).length || 0;
+
     return (
         <>
             <div className="space-y-6">
                 {/* Header */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-3xl font-bold text-gray-900">My Boards</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">
+                            {showArchived ? 'Archived Boards' : 'My Boards'}
+                        </h1>
                         <p className="text-muted-foreground mt-1">
-                            Manage your Kanban boards and track progress
+                            {showArchived
+                                ? `${archivedCount} archived boards`
+                                : `Manage your Kanban boards and track progress`}
                         </p>
                     </div>
-                    <Button onClick={() => setShowCreateModal(true)}>
-                        <Plus className="w-4 h-4 mr-2" />
-                        Create Board
-                    </Button>
+                    <div className="flex space-x-2">
+                        <Button
+                            variant={showArchived ? 'default' : 'outline'}
+                            onClick={() => setShowArchived(!showArchived)}
+                        >
+                            <Archive className="w-4 h-4 mr-2" />
+                            {showArchived ? 'Show Active' : `Archived (${archivedCount})`}
+                        </Button>
+                        {!showArchived && (
+                            <Button onClick={() => setShowCreateModal(true)}>
+                                <Plus className="w-4 h-4 mr-2" />
+                                Create Board
+                            </Button>
+                        )}
+                    </div>
                 </div>
 
                 {/* Search */}
@@ -70,15 +93,27 @@ export default function BoardsPage() {
                     </div>
                 ) : (
                     <div className="text-center py-12 bg-white rounded-lg border-2 border-dashed">
-                        <Plus className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">No boards yet</h3>
-                        <p className="text-muted-foreground mb-4">
-                            Create your first board to get started
-                        </p>
-                        <Button onClick={() => setShowCreateModal(true)}>
-                            <Plus className="w-4 h-4 mr-2" />
-                            Create Board
-                        </Button>
+                        {showArchived ? (
+                            <>
+                                <Archive className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                                <h3 className="text-lg font-semibold mb-2">No archived boards</h3>
+                                <p className="text-muted-foreground">
+                                    Archived boards will appear here
+                                </p>
+                            </>
+                        ) : (
+                            <>
+                                <Plus className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                                <h3 className="text-lg font-semibold mb-2">No boards yet</h3>
+                                <p className="text-muted-foreground mb-4">
+                                    Create your first board to get started
+                                </p>
+                                <Button onClick={() => setShowCreateModal(true)}>
+                                    <Plus className="w-4 h-4 mr-2" />
+                                    Create Board
+                                </Button>
+                            </>
+                        )}
                     </div>
                 )}
             </div>
