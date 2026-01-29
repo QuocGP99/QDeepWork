@@ -1,12 +1,12 @@
 import { api } from '../lib/api';
-import type { Board, Column, Card } from '../types';
+import type { Board, Column, PaginatedResponse } from '../types';
 
 export const boardService = {
   // Boards
   async getBoards(): Promise<Board[]> {
-    const { data } = await api.get<any>('/api/kanban/boards/');
+    const { data } = await api.get<PaginatedResponse<Board> | Board[]>('/api/kanban/boards/');
     // Handle pagination (Django Rest Framework returns { results: [], count: ... })
-    if (data.results && Array.isArray(data.results)) {
+    if ('results' in data && Array.isArray(data.results)) {
       return data.results;
     }
     return Array.isArray(data) ? data : [];
@@ -31,15 +31,15 @@ export const boardService = {
     await api.delete(`/api/kanban/boards/${id}/`);
   },
 
-  async getBoardStatistics(id: number): Promise<any> {
-    const { data } = await api.get(`/api/kanban/boards/${id}/statistics/`);
+  async getBoardStatistics(id: number): Promise<unknown> {
+    const { data } = await api.get<unknown>(`/api/kanban/boards/${id}/statistics/`);
     return data;
   },
 
   // Columns
   async getColumns(boardId: number): Promise<Column[]> {
-    const { data } = await api.get<any>(`/api/kanban/columns/?board=${boardId}`);
-    if (data.results && Array.isArray(data.results)) {
+    const { data } = await api.get<PaginatedResponse<Column> | Column[]>(`/api/kanban/columns/?board=${boardId}`);
+    if ('results' in data && Array.isArray(data.results)) {
       return data.results;
     }
     return Array.isArray(data) ? data : [];
@@ -57,5 +57,10 @@ export const boardService = {
 
   async deleteColumn(id: number): Promise<void> {
     await api.delete(`/api/kanban/columns/${id}/`);
+  },
+
+  async duplicateBoard(id: number): Promise<Board> {
+    const { data } = await api.post<Board>(`/api/kanban/boards/${id}/duplicate/`);
+    return data;
   },
 };

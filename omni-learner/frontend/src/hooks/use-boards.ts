@@ -59,3 +59,17 @@ export function useBoardStatistics(id: number) {
         enabled: !!id,
     });
 }
+
+export function useDuplicateBoard() {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: number) => {
+            return boardService.duplicateBoard(id);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['boards'] });
+        },
+    });
+}
+
